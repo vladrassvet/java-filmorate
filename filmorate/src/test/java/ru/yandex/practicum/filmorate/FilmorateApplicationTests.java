@@ -10,4 +10,8 @@ class FilmorateApplicationTests {
 	void contextLoads() {
 	}
 
+	@Test
+	void testNameValidation(){
+
+	}
 }
