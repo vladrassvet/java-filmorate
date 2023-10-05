@@ -17,7 +17,7 @@ import java.util.List;
 public class FilmController {
 
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
-    private HashMap<Integer, Film> list;
+    private HashMap<Integer, Film> list = new HashMap<>();
 
     @GetMapping
     public List<Film> get() {
@@ -63,12 +63,18 @@ public class FilmController {
     }
 
     public boolean validateName(Film film) {
+        if(film == null || film.getName() == null){
+            log.error("Название фильма пустое!");
+            throw new ValidationException("Название фильма пустое!");
+        }
+        else {
             if (film.getName().length() == 0) {
                 log.error("Название фильма пустое!");
                 throw new ValidationException("Название фильма пустое!");
             } else {
                 return true;
             }
+        }
     }
 
     public boolean validateDescription(Film film) {
@@ -96,5 +102,9 @@ public class FilmController {
         } else {
             return true;
         }
+    }
+
+    public HashMap<Integer, Film> getHashMap(){
+        return list;
     }
 }

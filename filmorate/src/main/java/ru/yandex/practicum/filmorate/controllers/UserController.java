@@ -84,13 +84,14 @@ public class UserController {
         }
     }
 
-    public void validateName(User user) {
-        if(user.getName() == null){
+    public User validateName(User user) {
+        if(user == null || user.getName() == null){
             user.setName(user.getLogin());
         }
         else if (user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
+        return user;
     }
 
     public boolean validateBirthday(User user) {
@@ -100,5 +101,9 @@ public class UserController {
         } else {
             return true;
         }
+    }
+
+    public HashMap<Integer, User> getHashMap(){
+        return list;
     }
 }
