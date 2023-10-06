@@ -30,9 +30,9 @@ public class UserController {
 
     @PostMapping
     public User post(@RequestBody User user) {
-        if(validateBirthday(user) && validateEmail(user) && validateLogin(user)){
+        if (validateBirthday(user) && validateEmail(user) && validateLogin(user)) {
 
-            if(list.size() == 0)
+            if (list.size() == 0)
                 user.setId(1);
             else
                 user.setId(2);
@@ -48,7 +48,7 @@ public class UserController {
     @PutMapping
     public User put(@RequestBody User user) {
         User newUser = new User();
-        if(list.containsKey(user.getId())) {
+        if (list.containsKey(user.getId())) {
             if (validateBirthday(user) && validateEmail(user) && validateLogin(user)) {
                 validateName(user);
 
@@ -62,8 +62,7 @@ public class UserController {
                 list.put(user.getId(), newUser);
                 log.debug("Пользователь прошёл валидацию, обновлён и добавлен в базу");
             }
-        }
-        else{
+        } else {
             log.error("Пользователь не найден в базе данных");
             throw new ValidationException("Пользователь не найден в базе данных");
         }
@@ -89,10 +88,9 @@ public class UserController {
     }
 
     public User validateName(User user) {
-        if(user == null || user.getName() == null){
+        if (user == null || user.getName() == null) {
             return user;
-        }
-        else if (user.getName().isEmpty()) {
+        } else if (user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
         return user;
@@ -107,7 +105,7 @@ public class UserController {
         }
     }
 
-    public HashMap<Integer, User> getHashMap(){
+    public HashMap<Integer, User> getHashMap() {
         return list;
     }
 }
