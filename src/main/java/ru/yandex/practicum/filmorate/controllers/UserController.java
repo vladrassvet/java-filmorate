@@ -89,7 +89,7 @@ public class UserController {
 
     public User validateName(User user) {
         if (user == null || user.getName() == null) {
-            return user;
+            user.setName(user.getLogin());
         } else if (user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
