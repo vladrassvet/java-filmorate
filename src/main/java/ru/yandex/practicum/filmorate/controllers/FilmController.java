@@ -32,7 +32,7 @@ public class FilmController {
     public Film post(@RequestBody Film film) {
         if (validateName(film) && validateDuration(film) && validateDescription(film) && validateReleaseDate(film)) {
             log.debug("Фильм прошёл валидацию и добавлен в базу");
-            if(film.getId() == 0)
+            if (film.getId() == 0)
                 film.setId(1);
             list.put(film.getId(), film);
         }
@@ -62,11 +62,10 @@ public class FilmController {
     }
 
     public boolean validateName(Film film) {
-        if(film == null || film.getName() == null){
+        if (film == null || film.getName() == null) {
             log.error("Название фильма пустое!");
             throw new ValidationException("Название фильма пустое!");
-        }
-        else {
+        } else {
             if (film.getName().length() == 0) {
                 log.error("Название фильма пустое!");
                 throw new ValidationException("Название фильма пустое!");
@@ -103,7 +102,8 @@ public class FilmController {
         }
     }
 
-    public HashMap<Integer, Film> getHashMap(){
+    public HashMap<Integer, Film> getHashMap() {
         return list;
+
     }
 }
