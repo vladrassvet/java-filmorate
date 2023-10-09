@@ -9,22 +9,21 @@ import ru.yandex.practicum.filmorate.models.User;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    private HashMap<Integer, User> list = new HashMap<>();
+    private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
+    private Map<Integer, User> list = new HashMap<>();
 
     @GetMapping
-    public List<User> get() {
-        log.debug("Текущее количество пользователей в базе: {}", list.size());
+    public List<User> getAll() {
+        LOG.debug("Текущее количество пользователей в базе: {}", list.size());
         List<User> toReturn = new ArrayList<>();
-        for (User user : list.values()) {
-            toReturn.add(user);
-        }
+        toReturn.addAll(list.values());
         return toReturn;
     }
 
@@ -39,7 +38,7 @@ public class UserController {
 
             validateName(user);
             list.put(user.getId(), user);
-            log.debug("Пользователь успешно прошёл валидацию и добавлен в базу");
+            LOG.debug("Пользователь успешно прошёл валидацию и добавлен в базу");
         }
 
         return user;
@@ -47,11 +46,11 @@ public class UserController {
 
     @PutMapping
     public User put(@RequestBody User user) {
-        User newUser = new User();
+        User newUser = null;
         if (list.containsKey(user.getId())) {
             if (validateBirthday(user) && validateEmail(user) && validateLogin(user)) {
                 validateName(user);
-
+                newUser = new User();
                 newUser.setId(user.getId());
                 newUser.setName(user.getName());
                 newUser.setEmail(user.getEmail());
@@ -60,18 +59,21 @@ public class UserController {
 
                 list.remove(user.getId());
                 list.put(user.getId(), newUser);
-                log.debug("Пользователь прошёл валидацию, обновлён и добавлен в базу");
+                LOG.debug("Пользователь прошёл валидацию, обновлён и добавлен в базу");
             }
         } else {
-            log.error("Пользователь не найден в базе данных");
-            throw new ValidationException("Пользователь не найден в базе данных");
+            LOG.error("Пользователь {} не найден в базе данных", user.getName());
+            throw new ValidationException("Пользователь \"" + user.getName() + "\" не найден в базе данных");
         }
         return newUser;
     }
 
     public boolean validateEmail(User user) {
-        if (user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
-            log.error("Указана неверная электронная почта пользователя!");
+        if (user == null || user.getEmail() == null) {
+            LOG.error("Электронная почта пользователя равна null!");
+            throw new ValidationException("Электронная почта пользователя равна null!");
+        } else if (user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
+            LOG.error("Указана неверная электронная почта пользователя!");
             throw new ValidationException("Указана неверная электронная почта пользователя!");
         } else {
             return true;
@@ -79,8 +81,12 @@ public class UserController {
     }
 
     public boolean validateLogin(User user) {
+        if (user == null || user.getLogin() == null) {
+            LOG.error("Логин пользователя равен null!");
+            throw new ValidationException("Логин пользователя равен null!");
+        }
         if (user.getLogin().isBlank()) {
-            log.error("Указан неверный логин пользователя!");
+            LOG.error("Указан неверный логин пользователя!");
             throw new ValidationException("Указан неверный логин пользователя!");
         } else {
             return true;
@@ -88,7 +94,10 @@ public class UserController {
     }
 
     public User validateName(User user) {
-        if (user == null || user.getName() == null) {
+        if (user == null) {
+            LOG.error("Пользователь равен null, валидация имени невозможна!");
+            throw new ValidationException("Пользователь равен null, валидация имени невозможна!");
+        } else if (user.getName() == null) {
             user.setName(user.getLogin());
         } else if (user.getName().isEmpty()) {
             user.setName(user.getLogin());
@@ -97,15 +106,18 @@ public class UserController {
     }
 
     public boolean validateBirthday(User user) {
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.error("Дата рождения пользователя не может быть в будущем!");
+        if (user == null || user.getBirthday() == null) {
+            LOG.error("Дата рождения пользователя равна null!");
+            throw new ValidationException("Дата рождения пользователя равна null!");
+        } else if (user.getBirthday().isAfter(LocalDate.now())) {
+            LOG.error("Дата рождения пользователя не может быть в будущем!");
             throw new ValidationException("Дата рождения пользователя не может быть в будущем!");
         } else {
             return true;
         }
     }
 
-    public HashMap<Integer, User> getHashMap() {
+    public Map<Integer, User> returnList() {
         return list;
     }
 }

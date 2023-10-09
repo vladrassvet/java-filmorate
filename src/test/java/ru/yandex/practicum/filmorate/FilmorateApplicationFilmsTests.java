@@ -3,30 +3,24 @@ package ru.yandex.practicum.filmorate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.controllers.UserController;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.models.Film;
 import ru.yandex.practicum.filmorate.controllers.FilmController;
-import ru.yandex.practicum.filmorate.models.User;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class FilmorateApplicationTests {
+class FilmorateApplicationFilmsTests {
 
     private FilmController filmController;
-    private UserController userController;
     private Film film1;
     private Film film2;
-    private User user1;
-    private User user2;
 
     @BeforeEach
     void init() {
         filmController = new FilmController();
-        userController = new UserController();
 
         film1 = new Film();
         film1.setId(1);
@@ -41,20 +35,6 @@ class FilmorateApplicationTests {
         film2.setDuration(130);
         film2.setName("Name 2");
         film2.setDescription("Description 2");
-
-        user1 = new User();
-        user1.setId(1);
-        user1.setName("Name 1");
-        user1.setBirthday(LocalDate.parse("1980-10-10"));
-        user1.setLogin("Login 1");
-        user1.setEmail("me@home.com");
-
-        user2 = new User();
-        user2.setId(2);
-        user2.setName("Name 2");
-        user2.setBirthday(LocalDate.parse("1981-10-10"));
-        user2.setLogin("Login 2");
-        user2.setEmail("haha@haha.com");
     }
 
     @Test
@@ -108,7 +88,7 @@ class FilmorateApplicationTests {
     void testFilmCreation() {
         filmController.post(film1);
         filmController.post(film2);
-        assertEquals(2, filmController.getHashMap().size());
+        assertEquals(2, filmController.returnList().size());
     }
 
     @Test
@@ -116,7 +96,7 @@ class FilmorateApplicationTests {
         filmController.post(film2);
         film2.setName("New Name");
         filmController.put(film2);
-        assertEquals("New Name", filmController.getHashMap().get(film2.getId()).getName());
+        assertEquals("New Name", filmController.returnList().get(film2.getId()).getName());
     }
 
     @Test
@@ -124,75 +104,14 @@ class FilmorateApplicationTests {
         filmController.post(film2);
         film2.setId(999);
         Exception exception = assertThrows(ValidationException.class, () -> filmController.put(film2));
-        assertEquals("Фильм не найден в базе данных", exception.getMessage());
+        assertEquals("Фильм \"Name 2\" не найден в базе данных", exception.getMessage());
     }
 
     @Test
     void testFilmsGet() {
         filmController.post(film1);
-        assertEquals(1, filmController.get().size());
+        assertEquals(1, filmController.getAll().size());
         filmController.post(film2);
-        assertEquals(2, filmController.get().size());
-    }
-
-    @Test
-    void testUserEmailValidation() {
-        user1.setEmail("meme.com");
-        Exception exception = assertThrows(ValidationException.class, () -> userController.validateEmail(user1));
-        assertEquals("Указана неверная электронная почта пользователя!", exception.getMessage());
-    }
-
-    @Test
-    void testUserLoginValidation() {
-        user1.setLogin("");
-        Exception exception = assertThrows(ValidationException.class, () -> userController.validateLogin(user1));
-        assertEquals("Указан неверный логин пользователя!", exception.getMessage());
-    }
-
-    @Test
-    void testUserNameValidation() {
-        user1.setName("");
-        User testUser = userController.validateName(user1);
-        assertEquals(user1.getLogin(), testUser.getName());
-    }
-
-    @Test
-    void testUserBirthdayValidation() {
-        user1.setBirthday(LocalDate.parse("2025-10-10"));
-        Exception exception = assertThrows(ValidationException.class, () -> userController.validateBirthday(user1));
-        assertEquals("Дата рождения пользователя не может быть в будущем!", exception.getMessage());
-    }
-
-    @Test
-    void testUserCreation() {
-        userController.post(user1);
-        assertEquals(1, userController.getHashMap().size());
-        userController.post(user2);
-        assertEquals(2, userController.getHashMap().size());
-    }
-
-    @Test
-    void testUserUpdate() {
-        userController.post(user1);
-        user1.setName("New Name");
-        userController.put(user1);
-        assertEquals("New Name", userController.getHashMap().get(user1.getId()).getName());
-    }
-
-    @Test
-    void testUserUpdateUnknownId() {
-        userController.post(user1);
-        user1.setId(999);
-        Exception exception = assertThrows(ValidationException.class, () -> userController.put(user1));
-        assertEquals("Пользователь не найден в базе данных", exception.getMessage());
-    }
-
-    @Test
-    void testUsersGet() {
-        userController.post(user1);
-        assertEquals(1, userController.get().size());
-        userController.post(user2);
-        assertEquals(2, userController.get().size());
+        assertEquals(2, filmController.getAll().size());
     }
 }
-
