@@ -67,33 +67,33 @@ class FilmorateApplicationUsersTests {
 
     @Test
     void testUserCreation() {
-        userController.post(user1);
+        userController.addUser(user1);
         assertEquals(1, userController.returnList().size());
-        userController.post(user2);
+        userController.addUser(user2);
         assertEquals(2, userController.returnList().size());
     }
 
     @Test
     void testUserUpdate() {
-        userController.post(user1);
+        userController.addUser(user1);
         user1.setName("New Name");
-        userController.put(user1);
+        userController.updateUser(user1);
         assertEquals("New Name", userController.returnList().get(user1.getId()).getName());
     }
 
     @Test
     void testUserUpdateUnknownId() {
-        userController.post(user1);
+        userController.addUser(user1);
         user1.setId(999);
-        Exception exception = assertThrows(ValidationException.class, () -> userController.put(user1));
+        Exception exception = assertThrows(ValidationException.class, () -> userController.updateUser(user1));
         assertEquals("Пользователь \"Name 1\" не найден в базе данных", exception.getMessage());
     }
 
     @Test
     void testUsersGet() {
-        userController.post(user1);
+        userController.addUser(user1);
         assertEquals(1, userController.getAll().size());
-        userController.post(user2);
+        userController.addUser(user2);
         assertEquals(2, userController.getAll().size());
     }
 }

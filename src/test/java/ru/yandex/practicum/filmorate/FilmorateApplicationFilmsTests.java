@@ -86,32 +86,32 @@ class FilmorateApplicationFilmsTests {
 
     @Test
     void testFilmCreation() {
-        filmController.post(film1);
-        filmController.post(film2);
+        filmController.addFilm(film1);
+        filmController.addFilm(film2);
         assertEquals(2, filmController.returnList().size());
     }
 
     @Test
     void testFilmUpdate() {
-        filmController.post(film2);
+        filmController.addFilm(film2);
         film2.setName("New Name");
-        filmController.put(film2);
+        filmController.updateFilm(film2);
         assertEquals("New Name", filmController.returnList().get(film2.getId()).getName());
     }
 
     @Test
     void testFilmUpdateUnknownId() {
-        filmController.post(film2);
+        filmController.addFilm(film2);
         film2.setId(999);
-        Exception exception = assertThrows(ValidationException.class, () -> filmController.put(film2));
+        Exception exception = assertThrows(ValidationException.class, () -> filmController.updateFilm(film2));
         assertEquals("Фильм \"Name 2\" не найден в базе данных", exception.getMessage());
     }
 
     @Test
     void testFilmsGet() {
-        filmController.post(film1);
+        filmController.addFilm(film1);
         assertEquals(1, filmController.getAll().size());
-        filmController.post(film2);
+        filmController.addFilm(film2);
         assertEquals(2, filmController.getAll().size());
     }
 }

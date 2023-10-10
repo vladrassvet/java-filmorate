@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/films")
+@Slf4j
 public class FilmController {
 
     private static final Logger LOG = LoggerFactory.getLogger(FilmController.class);
@@ -22,13 +24,11 @@ public class FilmController {
     @GetMapping
     public List<Film> getAll() {
         LOG.debug("Текущее количество фильмов в базе: {}", list.size());
-        List<Film> toReturn = new ArrayList<>();
-        toReturn.addAll(list.values());
-        return toReturn;
+        return new ArrayList<>(list.values());
     }
 
     @PostMapping
-    public Film post(@RequestBody Film film) {
+    public Film addFilm(@RequestBody Film film) {
         if (validateName(film) && validateDuration(film) && validateDescription(film) && validateReleaseDate(film)) {
             LOG.debug("Фильм прошёл валидацию и добавлен в базу");
             if (film.getId() == 0)
@@ -39,7 +39,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film put(@RequestBody Film film) {
+    public Film updateFilm(@RequestBody Film film) {
         Film newFilm = null;
         if (validateName(film) && validateDuration(film) && validateDescription(film) && validateReleaseDate(film)) {
             LOG.debug("Фильм прошёл валидацию при обновлении");

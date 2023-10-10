@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@Slf4j
 public class UserController {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
@@ -22,30 +24,27 @@ public class UserController {
     @GetMapping
     public List<User> getAll() {
         LOG.debug("Текущее количество пользователей в базе: {}", list.size());
-        List<User> toReturn = new ArrayList<>();
-        toReturn.addAll(list.values());
-        return toReturn;
+        return new ArrayList<>(list.values());
     }
 
     @PostMapping
-    public User post(@RequestBody User user) {
+    public User addUser(@RequestBody User user) {
         if (validateBirthday(user) && validateEmail(user) && validateLogin(user)) {
-
-            if (list.size() == 0)
+            if (list.size() == 0){
                 user.setId(1);
-            else
+            }
+            else{
                 user.setId(2);
-
+            }
             validateName(user);
             list.put(user.getId(), user);
             LOG.debug("Пользователь успешно прошёл валидацию и добавлен в базу");
         }
-
         return user;
     }
 
     @PutMapping
-    public User put(@RequestBody User user) {
+    public User updateUser(@RequestBody User user) {
         User newUser = null;
         if (list.containsKey(user.getId())) {
             if (validateBirthday(user) && validateEmail(user) && validateLogin(user)) {
