@@ -30,10 +30,9 @@ public class UserController {
     @PostMapping
     public User addUser(@RequestBody User user) {
         if (validateBirthday(user) && validateEmail(user) && validateLogin(user)) {
-            if (list.size() == 0){
+            if (list.size() == 0) {
                 user.setId(1);
-            }
-            else{
+            } else {
                 user.setId(2);
             }
             validateName(user);
