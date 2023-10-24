@@ -4,12 +4,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controllers.UserController;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.services.UserService;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.validationException.NotFoundException;
+import ru.yandex.practicum.filmorate.validationException.ValidationException;
 import ru.yandex.practicum.filmorate.models.User;
 import ru.yandex.practicum.filmorate.validation.ValidateUsers;
-
 import java.time.LocalDate;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -17,12 +19,16 @@ class FilmorateApplicationUsersTests {
 
     private UserController userController;
     private ValidateUsers validateUsers;
+    private UserService userService;
+    private UserStorage userStorage;
     private User user1;
     private User user2;
 
     @BeforeEach
     void init() {
-        userController = new UserController();
+        userStorage = new InMemoryUserStorage();
+        userService = new UserService(userStorage);
+        userController = new UserController(userService);
         validateUsers = new ValidateUsers();
 
         user1 = new User();
@@ -71,9 +77,9 @@ class FilmorateApplicationUsersTests {
     @Test
     void testUserCreation() {
         userController.addUser(user1);
-        assertEquals(1, userController.returnList().size());
+        assertEquals(1, userStorage.getUserMap().size());
         userController.addUser(user2);
-        assertEquals(2, userController.returnList().size());
+        assertEquals(2, userStorage.getUserMap().size());
     }
 
     @Test
@@ -81,15 +87,15 @@ class FilmorateApplicationUsersTests {
         userController.addUser(user1);
         user1.setName("New Name");
         userController.updateUser(user1);
-        assertEquals("New Name", userController.returnList().get(user1.getId()).getName());
+        assertEquals("New Name", userStorage.getUserMap().get(0).getName());
     }
 
     @Test
     void testUserUpdateUnknownId() {
         userController.addUser(user1);
         user1.setId(999);
-        Exception exception = assertThrows(ValidationException.class, () -> userController.updateUser(user1));
-        assertEquals("Пользователь \"Name 1\" не найден в базе данных", exception.getMessage());
+        Exception exception = assertThrows(NotFoundException.class, () -> userController.updateUser(user1));
+        assertEquals("пользователя с id = 999 не существует", exception.getMessage());
     }
 
     @Test

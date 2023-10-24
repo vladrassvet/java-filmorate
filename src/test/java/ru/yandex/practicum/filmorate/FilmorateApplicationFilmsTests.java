@@ -3,13 +3,15 @@ package ru.yandex.practicum.filmorate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.services.FilmService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.validationException.NotFoundException;
+import ru.yandex.practicum.filmorate.validationException.ValidationException;
 import ru.yandex.practicum.filmorate.models.Film;
 import ru.yandex.practicum.filmorate.controllers.FilmController;
 import ru.yandex.practicum.filmorate.validation.ValidateFilms;
-
 import java.time.LocalDate;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -19,10 +21,14 @@ class FilmorateApplicationFilmsTests {
     private Film film1;
     private Film film2;
     private ValidateFilms validateFilms;
+    private FilmService filmService;
+    private FilmStorage filmStorage;
 
     @BeforeEach
     void init() {
-        filmController = new FilmController();
+        filmStorage = new InMemoryFilmStorage();
+        filmService = new FilmService(filmStorage);
+        filmController = new FilmController(filmService);
         validateFilms = new ValidateFilms();
 
         film1 = new Film();
@@ -89,25 +95,25 @@ class FilmorateApplicationFilmsTests {
 
     @Test
     void testFilmCreation() {
-        filmController.addFilm(film1);
-        filmController.addFilm(film2);
-        assertEquals(2, filmController.returnList().size());
+        filmStorage.createFilm(film1);
+        filmStorage.createFilm(film2);
+        assertEquals(2, filmStorage.getFilmMap().size());
     }
 
     @Test
     void testFilmUpdate() {
-        filmController.addFilm(film2);
+        filmStorage.createFilm(film2);
         film2.setName("New Name");
-        filmController.updateFilm(film2);
-        assertEquals("New Name", filmController.returnList().get(film2.getId()).getName());
+        filmStorage.updateFilms(film2);
+        assertEquals("New Name", filmStorage.getFilmMap().get(0).getName());
     }
 
     @Test
     void testFilmUpdateUnknownId() {
         filmController.addFilm(film2);
         film2.setId(999);
-        Exception exception = assertThrows(ValidationException.class, () -> filmController.updateFilm(film2));
-        assertEquals("Фильм \"Name 2\" не найден в базе данных", exception.getMessage());
+        Exception exception = assertThrows(NotFoundException.class, () -> filmController.updateFilm(film2));
+        assertEquals("Фильма с таким id = 999 не существует", exception.getMessage());
     }
 
     @Test
