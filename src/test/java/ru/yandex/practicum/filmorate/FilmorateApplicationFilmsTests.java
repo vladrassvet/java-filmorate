@@ -10,7 +10,7 @@ import ru.yandex.practicum.filmorate.validationException.NotFoundException;
 import ru.yandex.practicum.filmorate.validationException.ValidationException;
 import ru.yandex.practicum.filmorate.models.Film;
 import ru.yandex.practicum.filmorate.controllers.FilmController;
-import ru.yandex.practicum.filmorate.validation.ValidateFilms;
+import ru.yandex.practicum.filmorate.validation.FilmValidator;
 import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,7 +20,7 @@ class FilmorateApplicationFilmsTests {
     private FilmController filmController;
     private Film film1;
     private Film film2;
-    private ValidateFilms validateFilms;
+    private FilmValidator filmValidator;
     private FilmService filmService;
     private FilmStorage filmStorage;
 
@@ -29,7 +29,7 @@ class FilmorateApplicationFilmsTests {
         filmStorage = new InMemoryFilmStorage();
         filmService = new FilmService(filmStorage);
         filmController = new FilmController(filmService);
-        validateFilms = new ValidateFilms();
+        filmValidator = new FilmValidator();
 
         film1 = new Film();
         film1.setId(1);
@@ -59,7 +59,7 @@ class FilmorateApplicationFilmsTests {
                 "Описание фильма длиннее 200 знаков!Описание фильма длиннее 200 знаков!" +
                 "Описание фильма длиннее 200 знаков!Описание фильма длиннее 200 знаков!" +
                 "Описание фильма длиннее 200 знаков!Описание фильма длиннее 200 знаков!");
-        Exception exception = assertThrows(ValidationException.class, () -> validateFilms.validateDescription(film));
+        Exception exception = assertThrows(ValidationException.class, () -> filmValidator.validateDescription(film));
         assertEquals("Описание фильма длиннее 200 знаков!", exception.getMessage());
     }
 
@@ -67,14 +67,14 @@ class FilmorateApplicationFilmsTests {
     void testFilmDurationValidation() {
         final Film film = new Film();
         film.setDuration(-1);
-        Exception exception = assertThrows(ValidationException.class, () -> validateFilms.validateDuration(film));
+        Exception exception = assertThrows(ValidationException.class, () -> filmValidator.validateDuration(film));
         assertEquals("Продолжительность фильма должна быть положительной", exception.getMessage());
     }
 
     @Test
     void testFilmNameValidation() {
         final Film film = new Film();
-        Exception exception = assertThrows(ValidationException.class, () -> validateFilms.validateName(film));
+        Exception exception = assertThrows(ValidationException.class, () -> filmValidator.validateName(film));
         assertEquals("Название фильма пустое!", exception.getMessage());
     }
 
@@ -82,7 +82,7 @@ class FilmorateApplicationFilmsTests {
     void testFilmDateValidation() {
         final Film film = new Film();
         film.setReleaseDate(LocalDate.parse("1895-12-27"));
-        Exception exception = assertThrows(ValidationException.class, () -> validateFilms.validateReleaseDate(film));
+        Exception exception = assertThrows(ValidationException.class, () -> filmValidator.validateReleaseDate(film));
         assertEquals("Дата релиза фильма должна быть не раньше 28 декабря 1895 года!", exception.getMessage());
     }
 
@@ -90,7 +90,7 @@ class FilmorateApplicationFilmsTests {
     void testFilmDateValidationBorder() {
         final Film film = new Film();
         film.setReleaseDate(LocalDate.parse("1895-12-28"));
-        assertTrue(validateFilms.validateReleaseDate(film));
+        assertTrue(filmValidator.validateReleaseDate(film));
     }
 
     @Test

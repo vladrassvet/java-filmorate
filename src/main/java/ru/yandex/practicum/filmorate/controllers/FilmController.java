@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.services.FilmService;
 import ru.yandex.practicum.filmorate.validationException.NotFoundException;
 import ru.yandex.practicum.filmorate.models.Film;
-import ru.yandex.practicum.filmorate.validation.ValidateFilms;
+import ru.yandex.practicum.filmorate.validation.FilmValidator;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 public class FilmController {
 
-    private ValidateFilms validateFilms = new ValidateFilms();
+    private FilmValidator filmValidator = new FilmValidator();
     private FilmService filmService;
 
     @Autowired
@@ -24,15 +24,15 @@ public class FilmController {
 
     @GetMapping("/films")
     public List<Film> getAll() {
-        return filmService.getFilmMap();
+        return filmService.getFilms();
     }
 
     @PostMapping("/films")
     public Film addFilm(@RequestBody Film film) {
-        validateFilms.validateName(film);
-        validateFilms.validateDuration(film);
-        validateFilms.validateDescription(film);
-        validateFilms.validateReleaseDate(film);
+        filmValidator.validateName(film);
+        filmValidator.validateDuration(film);
+        filmValidator.validateDescription(film);
+        filmValidator.validateReleaseDate(film);
 
         return filmService.createFilm(film);
     }
@@ -44,16 +44,12 @@ public class FilmController {
 
     @PutMapping("/films/{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) {
-        if (userId <= 0 || id <= 0) {
-            throw new NotFoundException("передан некорректный id; " + id +
-                    " фильма, или пользователя userId; " + userId);
-        }
         filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/films/{id}/like/{userId}")
     public void deleteLike(@PathVariable int id, @PathVariable int userId) {
-        if (userId <= 0 || id <= 0) {
+       if (userId <= 0 || id <= 0) {
             throw new NotFoundException("передан некорректный id; " + id +
                     " фильма, или пользователя userId; " + userId);
         }

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.services.UserService;
 import ru.yandex.practicum.filmorate.validationException.NotFoundException;
 import ru.yandex.practicum.filmorate.models.User;
-import ru.yandex.practicum.filmorate.validation.ValidateUsers;
+import ru.yandex.practicum.filmorate.validation.UserValidator;
 
 import java.util.*;
 
@@ -15,7 +15,7 @@ import java.util.*;
 public class UserController {
 
     private UserService userService;
-    private ValidateUsers validateUsers = new ValidateUsers();
+    private UserValidator userValidator = new UserValidator();
 
     @Autowired
     public UserController(UserService userService) {
@@ -24,15 +24,15 @@ public class UserController {
 
     @GetMapping("/users")
     public List<User> getAll() {
-        return userService.getUserMap();
+        return userService.getUsers();
     }
 
     @PostMapping("/users")
     public User addUser(@RequestBody User user) {
-        validateUsers.validateBirthday(user);
-        validateUsers.validateEmail(user);
-        validateUsers.validateLogin(user);
-        validateUsers.validateName(user);
+        userValidator.validateBirthday(user);
+        userValidator.validateEmail(user);
+        userValidator.validateLogin(user);
+        userValidator.validateName(user);
 
         return userService.createUser(user);
     }
@@ -44,19 +44,11 @@ public class UserController {
 
     @PutMapping("/users/{id}/friends/{friendId}")
     public void addFriend(@PathVariable int id, @PathVariable int friendId) {
-        if (id <= 0 || friendId <= 0) {
-            throw new NotFoundException("передан некорректный id; "
-                    + id + "пользователя или добавляемого друга friendId; " + friendId);
-        }
         userService.addFriends(id, friendId);
     }
 
     @DeleteMapping("/users/{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable int id, @PathVariable int friendId) {
-        if (id <= 0 || friendId <= 0) {
-            throw new NotFoundException("передан некорректный id; "
-                    + id + "пользователя или добавляемого друга friendId; " + friendId);
-        }
         userService.deleteFriends(id, friendId);
     }
 

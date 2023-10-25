@@ -10,7 +10,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validationException.NotFoundException;
 import ru.yandex.practicum.filmorate.validationException.ValidationException;
 import ru.yandex.practicum.filmorate.models.User;
-import ru.yandex.practicum.filmorate.validation.ValidateUsers;
+import ru.yandex.practicum.filmorate.validation.UserValidator;
 import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class FilmorateApplicationUsersTests {
 
     private UserController userController;
-    private ValidateUsers validateUsers;
+    private UserValidator userValidator;
     private UserService userService;
     private UserStorage userStorage;
     private User user1;
@@ -29,7 +29,7 @@ class FilmorateApplicationUsersTests {
         userStorage = new InMemoryUserStorage();
         userService = new UserService(userStorage);
         userController = new UserController(userService);
-        validateUsers = new ValidateUsers();
+        userValidator = new UserValidator();
 
         user1 = new User();
         user1.setId(1);
@@ -49,28 +49,28 @@ class FilmorateApplicationUsersTests {
     @Test
     void testUserEmailValidation() {
         user1.setEmail("meme.com");
-        Exception exception = assertThrows(ValidationException.class, () -> validateUsers.validateEmail(user1));
+        Exception exception = assertThrows(ValidationException.class, () -> userValidator.validateEmail(user1));
         assertEquals("Указана неверная электронная почта пользователя!", exception.getMessage());
     }
 
     @Test
     void testUserLoginValidation() {
         user1.setLogin("");
-        Exception exception = assertThrows(ValidationException.class, () -> validateUsers.validateLogin(user1));
+        Exception exception = assertThrows(ValidationException.class, () -> userValidator.validateLogin(user1));
         assertEquals("Указан неверный логин пользователя!", exception.getMessage());
     }
 
     @Test
     void testUserNameValidation() {
         user1.setName("");
-        User testUser = validateUsers.validateName(user1);
+        User testUser = userValidator.validateName(user1);
         assertEquals(user1.getLogin(), testUser.getName());
     }
 
     @Test
     void testUserBirthdayValidation() {
         user1.setBirthday(LocalDate.parse("2025-10-10"));
-        Exception exception = assertThrows(ValidationException.class, () -> validateUsers.validateBirthday(user1));
+        Exception exception = assertThrows(ValidationException.class, () -> userValidator.validateBirthday(user1));
         assertEquals("Дата рождения пользователя не может быть в будущем!", exception.getMessage());
     }
 

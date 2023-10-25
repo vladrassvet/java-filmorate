@@ -18,7 +18,7 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
 
-    public List<Film> getFilmMap() {
+    public List<Film> getFilms() {
         return filmStorage.getFilmMap();
     }
 
@@ -32,31 +32,24 @@ public class FilmService {
 
     public void addLike(int id, int userId) {
         Film film = filmStorage.getFilmById(id);
-        Set<Integer> listLikes = film.getLikes();
-        listLikes.add(userId);
+        film.getLikes().add(userId);
         log.info("like успешно добавлен");
-        film.setLikes(listLikes);
     }
 
     public void deleteLike(int id, int userId) {
         Film film = filmStorage.getFilmById(id);
-        Set<Integer> listLikes = film.getLikes();
-        listLikes.remove(userId);
+        film.getLikes().remove(userId);
         log.info("like успешно удален");
-        film.setLikes(listLikes);
     }
 
     public List<Film> topLikeFilms(int count) {
-        List<Film> listFilms = getFilmMap();
+        List<Film> listFilms = getFilms();
         if (count > listFilms.size()) {
             count = listFilms.size();
         }
         log.info("топ фильмов {}", listFilms);
         return listFilms.stream()
-                .sorted((p0, p1) -> {
-                    int comp = compare(p0.getLikes().size(), p1.getLikes().size());
-                    return -1 * comp;
-                }).limit(count)
+                .sorted((p0, p1) -> compare(p1.getLikes().size(), p0.getLikes().size())).limit(count)
                 .collect(Collectors.toList());
     }
 

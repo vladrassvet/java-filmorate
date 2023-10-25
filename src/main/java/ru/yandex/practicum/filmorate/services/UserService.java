@@ -18,7 +18,7 @@ public class UserService {
 
     private final UserStorage userStorage;
 
-    public List<User> getUserMap() {
+    public List<User> getUsers() {
         return userStorage.getUserMap();
     }
 
@@ -32,21 +32,15 @@ public class UserService {
 
     public void addFriends(int id, int friendId) {
         User user = userStorage.getUserById(id);
-        User user1 = userStorage.getUserById(friendId);
-        Set<Integer> listFriendId = user.getFriendsId();
-        Set<Integer> listFriendId1 = user1.getFriendsId();
-        listFriendId.add(friendId);
-        listFriendId1.add(id);
+        User friend = userStorage.getUserById(friendId);
+        user.getFriendsId().add(friendId);
+        friend.getFriendsId().add(id);
         log.info("друзья успешно добавлены");
-        user.setFriendsId(listFriendId);
-        user1.setFriendsId(listFriendId1);
     }
 
     public void deleteFriends(int id, int friendId) {
         User user = userStorage.getUserById(id);
-        Set<Integer> listFriendId = user.getFriendsId();
-        listFriendId.remove(friendId);
-        user.setFriendsId(listFriendId);
+        user.getFriendsId().remove(friendId);
         log.info("друг с id " + friendId + " успешно удален");
     }
 
