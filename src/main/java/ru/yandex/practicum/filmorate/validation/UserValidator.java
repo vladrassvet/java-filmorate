@@ -29,7 +29,7 @@ public class UserValidator {
         }
     }
 
-    public User validateName(User user) {
+    public static User validateName(User user) {
         if (user == null) {
             log.error("Пользователь равен null, валидация имени невозможна!");
             throw new ValidationException("Пользователь равен null, валидация имени невозможна!");

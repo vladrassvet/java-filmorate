@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 public class FilmController {
 
-    private FilmValidator filmValidator = new FilmValidator();
     private FilmService filmService;
 
     @Autowired
@@ -29,10 +28,10 @@ public class FilmController {
 
     @PostMapping("/films")
     public Film addFilm(@RequestBody Film film) {
-        filmValidator.validateName(film);
-        filmValidator.validateDuration(film);
-        filmValidator.validateDescription(film);
-        filmValidator.validateReleaseDate(film);
+        FilmValidator.validateName(film);
+        FilmValidator.validateDuration(film);
+        FilmValidator.validateDescription(film);
+        FilmValidator.validateReleaseDate(film);
 
         return filmService.createFilm(film);
     }

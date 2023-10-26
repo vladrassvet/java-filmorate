@@ -19,8 +19,4 @@ public class User {
     private String name;
     private LocalDate birthday;
     private Set<Integer> friendsId = new HashSet<>();
-
-    public void setId(int id) {
-        this.id = id;
-    }
 }

@@ -14,7 +14,6 @@ import java.util.*;
 public class UserController {
 
     private UserService userService;
-    private UserValidator userValidator = new UserValidator();
 
     @Autowired
     public UserController(UserService userService) {
@@ -28,10 +27,10 @@ public class UserController {
 
     @PostMapping("/users")
     public User addUser(@RequestBody User user) {
-        userValidator.validateBirthday(user);
-        userValidator.validateEmail(user);
-        userValidator.validateLogin(user);
-        userValidator.validateName(user);
+        UserValidator.validateBirthday(user);
+        UserValidator.validateEmail(user);
+        UserValidator.validateLogin(user);
+        UserValidator.validateName(user);
 
         return userService.createUser(user);
     }
