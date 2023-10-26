@@ -3,12 +3,15 @@ package ru.yandex.practicum.filmorate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.services.FilmService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.validationException.NotFoundException;
+import ru.yandex.practicum.filmorate.validationException.ValidationException;
 import ru.yandex.practicum.filmorate.models.Film;
 import ru.yandex.practicum.filmorate.controllers.FilmController;
-
+import ru.yandex.practicum.filmorate.validation.FilmValidator;
 import java.time.LocalDate;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -17,10 +20,16 @@ class FilmorateApplicationFilmsTests {
     private FilmController filmController;
     private Film film1;
     private Film film2;
+    private FilmValidator filmValidator;
+    private FilmService filmService;
+    private FilmStorage filmStorage;
 
     @BeforeEach
     void init() {
-        filmController = new FilmController();
+        filmStorage = new InMemoryFilmStorage();
+        filmService = new FilmService(filmStorage);
+        filmController = new FilmController(filmService);
+        filmValidator = new FilmValidator();
 
         film1 = new Film();
         film1.setId(1);
@@ -50,7 +59,7 @@ class FilmorateApplicationFilmsTests {
                 "Описание фильма длиннее 200 знаков!Описание фильма длиннее 200 знаков!" +
                 "Описание фильма длиннее 200 знаков!Описание фильма длиннее 200 знаков!" +
                 "Описание фильма длиннее 200 знаков!Описание фильма длиннее 200 знаков!");
-        Exception exception = assertThrows(ValidationException.class, () -> filmController.validateDescription(film));
+        Exception exception = assertThrows(ValidationException.class, () -> filmValidator.validateDescription(film));
         assertEquals("Описание фильма длиннее 200 знаков!", exception.getMessage());
     }
 
@@ -58,14 +67,14 @@ class FilmorateApplicationFilmsTests {
     void testFilmDurationValidation() {
         final Film film = new Film();
         film.setDuration(-1);
-        Exception exception = assertThrows(ValidationException.class, () -> filmController.validateDuration(film));
+        Exception exception = assertThrows(ValidationException.class, () -> filmValidator.validateDuration(film));
         assertEquals("Продолжительность фильма должна быть положительной", exception.getMessage());
     }
 
     @Test
     void testFilmNameValidation() {
         final Film film = new Film();
-        Exception exception = assertThrows(ValidationException.class, () -> filmController.validateName(film));
+        Exception exception = assertThrows(ValidationException.class, () -> filmValidator.validateName(film));
         assertEquals("Название фильма пустое!", exception.getMessage());
     }
 
@@ -73,7 +82,7 @@ class FilmorateApplicationFilmsTests {
     void testFilmDateValidation() {
         final Film film = new Film();
         film.setReleaseDate(LocalDate.parse("1895-12-27"));
-        Exception exception = assertThrows(ValidationException.class, () -> filmController.validateReleaseDate(film));
+        Exception exception = assertThrows(ValidationException.class, () -> filmValidator.validateReleaseDate(film));
         assertEquals("Дата релиза фильма должна быть не раньше 28 декабря 1895 года!", exception.getMessage());
     }
 
@@ -81,30 +90,30 @@ class FilmorateApplicationFilmsTests {
     void testFilmDateValidationBorder() {
         final Film film = new Film();
         film.setReleaseDate(LocalDate.parse("1895-12-28"));
-        assertTrue(filmController.validateReleaseDate(film));
+        assertTrue(filmValidator.validateReleaseDate(film));
     }
 
     @Test
     void testFilmCreation() {
-        filmController.addFilm(film1);
-        filmController.addFilm(film2);
-        assertEquals(2, filmController.returnList().size());
+        filmStorage.createFilm(film1);
+        filmStorage.createFilm(film2);
+        assertEquals(2, filmStorage.getFilmMap().size());
     }
 
     @Test
     void testFilmUpdate() {
-        filmController.addFilm(film2);
+        filmStorage.createFilm(film2);
         film2.setName("New Name");
-        filmController.updateFilm(film2);
-        assertEquals("New Name", filmController.returnList().get(film2.getId()).getName());
+        filmStorage.updateFilms(film2);
+        assertEquals("New Name", filmStorage.getFilmMap().get(0).getName());
     }
 
     @Test
     void testFilmUpdateUnknownId() {
         filmController.addFilm(film2);
         film2.setId(999);
-        Exception exception = assertThrows(ValidationException.class, () -> filmController.updateFilm(film2));
-        assertEquals("Фильм \"Name 2\" не найден в базе данных", exception.getMessage());
+        Exception exception = assertThrows(NotFoundException.class, () -> filmController.updateFilm(film2));
+        assertEquals("Фильма с таким id = 999 не существует", exception.getMessage());
     }
 
     @Test
