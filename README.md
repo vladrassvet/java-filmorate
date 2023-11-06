@@ -21,7 +21,7 @@ Template repository for Filmorate project.
 
 ## База данных, хранящяя информацию о пользователях и фильмах, имеет структуру, описанную в таблице ниже:
 
-<img width="614" alt="image" src="https://disk.yandex.ru/i/nl-jNN3phBrbKg">
+<img width="614" alt="image" src="https://github.com/vladrassvet/java-filmorate/blob/main/Database.PNG">
 
 
 ### Users 
