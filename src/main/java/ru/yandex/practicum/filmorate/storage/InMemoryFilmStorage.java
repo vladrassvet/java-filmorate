@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.models.Film;
+import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.validationException.NotFoundException;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
+@Deprecated
 public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Integer, Film> filmMap = new HashMap<>();

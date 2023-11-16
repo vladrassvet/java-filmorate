@@ -23,7 +23,7 @@ public class FilmController {
 
     @GetMapping("/films")
     public List<Film> getAll() {
-        return filmService.getFilms();
+        return filmService.getFilmMap();
     }
 
     @PostMapping("/films")

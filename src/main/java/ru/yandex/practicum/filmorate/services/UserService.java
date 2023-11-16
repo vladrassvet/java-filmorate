@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.models.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -17,8 +15,9 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserStorage userStorage;
+    private final UserDbStorage userDbStorage;
 
-    public List<User> getUsers() {
+    public List<User> getUserMap() {
         return userStorage.getUserMap();
     }
 
@@ -30,40 +29,23 @@ public class UserService {
         return userStorage.updateUsers(user);
     }
 
+    public User getUserById(int id) {
+        return userStorage.getUserById(id);
+    }
+
     public void addFriends(int id, int friendId) {
-        User user = userStorage.getUserById(id);
-        User friend = userStorage.getUserById(friendId);
-        user.getFriendsId().add(friendId);
-        friend.getFriendsId().add(id);
-        log.info("друзья успешно добавлены");
+        userDbStorage.addFriend(id, friendId);
     }
 
     public void deleteFriends(int id, int friendId) {
-        User user = userStorage.getUserById(id);
-        user.getFriendsId().remove(friendId);
-        log.info("друг с id " + friendId + " успешно удален");
+        userDbStorage.deleteFriend(id, friendId);
     }
 
     public List<User> getFriends(int id) {
-        User user = userStorage.getUserById(id);
-        Set<Integer> listFriendId = user.getFriendsId();
-        List<User> getFriend = new ArrayList<>();
-        for (Integer integer : listFriendId) {
-            getFriend.add(userStorage.getUserById(integer));
-        }
-        log.info("друзья USERa с id " + id + " {}", getFriend);
-        return getFriend;
+        return userDbStorage.printFriend(id);
     }
 
     public List<User> getFriendOfFriends(int id, int otherId) {
-        List<User> userList = getFriends(id).stream()
-                .filter(getFriends(otherId)::contains)
-                .collect(Collectors.toList());
-        log.info("общие друзья USERa с id: " + id + " USERa c id: " + otherId + "{}", userList);
-        return userList;
-    }
-
-    public User getUserById(int id) {
-        return userStorage.getUserById(id);
+        return userDbStorage.getFriendOfFriends(id, otherId);
     }
 }

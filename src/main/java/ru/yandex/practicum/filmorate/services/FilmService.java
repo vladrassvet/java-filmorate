@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.models.Film;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static java.lang.Integer.compare;
 
 @Slf4j
 @Service
@@ -17,8 +15,9 @@ import static java.lang.Integer.compare;
 public class FilmService {
 
     private final FilmStorage filmStorage;
+    private final FilmDbStorage filmDbStorage;
 
-    public List<Film> getFilms() {
+    public List<Film> getFilmMap() {
         return filmStorage.getFilmMap();
     }
 
@@ -30,30 +29,19 @@ public class FilmService {
         return filmStorage.updateFilms(film);
     }
 
+    public Film getFilmById(int id) {
+        return filmStorage.getFilmById(id);
+    }
+
     public void addLike(int id, int userId) {
-        Film film = filmStorage.getFilmById(id);
-        film.getLikes().add(userId);
-        log.info("like успешно добавлен");
+        filmDbStorage.addLike(id, userId);
     }
 
     public void deleteLike(int id, int userId) {
-        Film film = filmStorage.getFilmById(id);
-        film.getLikes().remove(userId);
-        log.info("like успешно удален");
+        filmDbStorage.deleteLike(id, userId);
     }
 
     public List<Film> topLikeFilms(int count) {
-        List<Film> listFilms = getFilms();
-        if (count > listFilms.size()) {
-            count = listFilms.size();
-        }
-        log.info("топ фильмов {}", listFilms);
-        return listFilms.stream()
-                .sorted((p0, p1) -> compare(p1.getLikes().size(), p0.getLikes().size())).limit(count)
-                .collect(Collectors.toList());
-    }
-
-    public Film getFilmById(int id) {
-        return filmStorage.getFilmById(id);
+        return filmDbStorage.topLikesFilms(count);
     }
 }
