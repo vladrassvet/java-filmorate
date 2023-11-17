@@ -90,6 +90,6 @@ class UserDbStorageTest {
         assertEquals(1, listFriends.size(), "пользователь имеет не верное количество друзей");
         userDbStorage.deleteFriend(1, 2);
         List<User> listFriends1 = userDbStorage.printFriend(1);
-        assertEquals(0, listFriends1.size(), "друзь не удалились");
+        assertEquals(0, listFriends1.size(), "друзья не удалились");
     }
 }

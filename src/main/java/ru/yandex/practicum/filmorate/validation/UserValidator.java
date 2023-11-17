@@ -26,7 +26,7 @@ public class UserValidator {
         }
         if (user.getLogin().isBlank()) {
             log.error("Указан неверный логин пользователя!");
-            throw new ValidationException("Указан неверный логин пользователя!");
+            throw new ValidationException("Неверный login");
         }
     }
 
