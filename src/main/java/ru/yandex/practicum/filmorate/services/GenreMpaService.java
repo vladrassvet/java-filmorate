@@ -13,6 +13,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class GenreMpaService {
+
     private final GenreMpaStorage genreMpaStorage;
 
     public List<Genre> getListGenre() {

@@ -33,32 +33,32 @@ public class FilmDbStorageTest {
 
     @Test
     void testCreateFilm() {
-        Film film1 = new Film("nisi eiusmod", "adipisicing",
+        Film film1 = new Film("name", "Description",
                 LocalDate.of(1967, 3, 25), 100, mpa);
         filmStorage.createFilm(film1);
         assertThat(film1).hasFieldOrPropertyWithValue("id", 1);
-        assertThat(film1).hasFieldOrPropertyWithValue("name", "nisi eiusmod");
+        assertThat(film1).hasFieldOrPropertyWithValue("name", "name");
     }
 
     @Test
     void updateFilmTest() {
-        Film film1 = new Film("nisi eiusmod2", "adipisicing2",
+        Film film1 = new Film("name2", "description2",
                 LocalDate.of(1967, 5, 25), 100, mpa);
         filmStorage.createFilm(film1);
         assertThat(film1).hasFieldOrPropertyWithValue("id", 1);
-        film1 = new Film(1, "nisi eiusmod2", "adipisicing2",
+        film1 = new Film(1, "name2", "description2",
                 LocalDate.of(1967, 5, 25), 100, mpa);
         filmStorage.updateFilms(film1);
         assertThat(film1).hasFieldOrPropertyWithValue("id", 1);
-        assertThat(film1).hasFieldOrPropertyWithValue("name", "nisi eiusmod2");
+        assertThat(film1).hasFieldOrPropertyWithValue("name", "name2");
 
     }
 
     @Test
     void getFilmMapTest() {
-        Film film1 = new Film("nisi eiusmod", "adipisicing",
+        Film film1 = new Film("name", "description",
                 LocalDate.of(1967, 3, 25), 100, mpa);
-        Film film2 = new Film(1, "nisi eiusmod2", "adipisicing2",
+        Film film2 = new Film(1, "name2", "description2",
                 LocalDate.of(1967, 5, 25), 100, mpa);
         filmStorage.createFilm(film1);
         filmStorage.createFilm(film2);
@@ -68,15 +68,15 @@ public class FilmDbStorageTest {
 
     @Test
     void getFilmByIdTest() {
-        Film film1 = new Film("nisi eiusmod", "adipisicing",
+        Film film1 = new Film("name", "description",
                 LocalDate.of(1967, 3, 25), 100, mpa);
-        Film film2 = new Film(1, "nisi eiusmod2", "adipisicing2",
+        Film film2 = new Film(1, "name2", "description2",
                 LocalDate.of(1967, 5, 25), 100, mpa);
         filmStorage.createFilm(film1);
         filmStorage.createFilm(film2);
         Film getFilm = filmStorage.getFilmById(2);
         assertEquals(2, getFilm.getId(), "фильм вернулся неверный");
-        assertThat(getFilm).hasFieldOrPropertyWithValue("name", "nisi eiusmod2");
+        assertThat(getFilm).hasFieldOrPropertyWithValue("name", "name2");
 
     }
 
@@ -84,7 +84,7 @@ public class FilmDbStorageTest {
     void addLikeAndDelTest() {
         User user = new User("user@email.ru", "vanya123",
                 "Ivan Petrov", LocalDate.of(1990, 1, 1));
-        Film film1 = new Film("nisi eiusmod", "adipisicing",
+        Film film1 = new Film("name", "description",
                 LocalDate.of(1967, 3, 25), 100, mpa);
         userDbStorage.createUser(user);
         filmStorage.createFilm(film1);

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.models.User;
 import ru.yandex.practicum.filmorate.services.UserService;
+import ru.yandex.practicum.filmorate.validation.UserValidator;
 import ru.yandex.practicum.filmorate.validationException.NotFoundException;
 import ru.yandex.practicum.filmorate.validationException.ValidationException;
 
@@ -70,7 +71,6 @@ public class UserController {
     @GetMapping("/users/{id}/friends/common/{otherId}")
     public Collection<User> getFriendOfFriend(@PathVariable int id, @PathVariable int otherId) {
         return userService.getFriendOfFriends(id, otherId);
-
     }
 
     @GetMapping("/users/{id}")
@@ -79,9 +79,10 @@ public class UserController {
     }
 
     private void validate(User user) {
-        if (user.getLogin().contains(" ")) {
-            throw new ValidationException("Неверный login");
-        }
+        UserValidator.validateBirthday(user);
+        UserValidator.validateEmail(user);
+        UserValidator.validateLogin(user);
+        UserValidator.validateName(user);
     }
 
     private User checkName(User user) {

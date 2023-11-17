@@ -12,6 +12,5 @@ import lombok.EqualsAndHashCode;
 public class Genre {
 
     private final int id;
-
     private String name;
 }

@@ -77,7 +77,7 @@ class UserDbStorageTest {
     }
 
     @Test
-    void delFriendTest() {
+    void deleteFriendTest() {
         User user = new User("user@email.ru", "vanya123",
                 "Ivan Petrov", LocalDate.of(1990, 1, 1));
         User user1 = new User("user@email.ru", "vanya1234",
