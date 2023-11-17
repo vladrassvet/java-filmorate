@@ -1,4 +1,4 @@
-DROP TABLE friends,likes,users, genre, film_genre, MPA, films;
+--DROP TABLE friends,likes,users, genre, film_genre, MPA, films;
 
 create table if not exists MPA(
     MPA_id integer primary key auto_increment,
