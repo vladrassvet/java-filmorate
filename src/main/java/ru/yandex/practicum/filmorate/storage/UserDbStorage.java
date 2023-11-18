@@ -107,7 +107,7 @@ public class UserDbStorage implements UserStorage {
                 .collect(Collectors.toList());
     }
 
-    private List<User> getFriendOfFriends(int id, int oderId) {
+    public List<User> getFriendOfFriends(int id, int oderId) {
         return printFriend(id).stream()
                 .filter(printFriend(oderId)::contains)
                 .collect(Collectors.toList());
