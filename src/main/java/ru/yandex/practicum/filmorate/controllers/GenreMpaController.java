@@ -15,7 +15,8 @@ import java.util.List;
 @Slf4j
 @RestController
 public class GenreMpaController {
-    GenreMpaService genreMpaService;
+
+    private GenreMpaService genreMpaService;
 
     @Autowired
     public GenreMpaController(GenreMpaService genreMpaService) {

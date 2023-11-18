@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.models.User;
@@ -85,7 +86,7 @@ public class UserController {
     }
 
     private User checkName(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
+        if (user.getName() == null || StringUtils.isBlank(user.getName())) {
             user = new User(user.getEmail(), user.getLogin(), user.getLogin(), user.getBirthday());
         }
         return user;

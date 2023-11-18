@@ -18,12 +18,12 @@ import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
-    User user;
-    UserController userController;
-    UserDbStorage userDbStorage;
-    JdbcTemplate jdbcTemplate;
-    UserService userService;
-    UserStorage userStorage;
+    private User user;
+    private UserController userController;
+    private UserDbStorage userDbStorage;
+    private JdbcTemplate jdbcTemplate;
+    private UserService userService;
+    private UserStorage userStorage;
 
     @BeforeEach
     public void launchBefore() {

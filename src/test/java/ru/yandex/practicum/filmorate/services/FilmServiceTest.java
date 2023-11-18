@@ -19,14 +19,13 @@ import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FilmServiceTest {
-    FilmStorage filmStorage;
-    FilmDbStorage filmDbStorage;
-    JdbcTemplate jdbcTemplate;
-    FilmController filmController;
-    FilmService filmService;
-    Film film;
-    User user;
-
+    private FilmStorage filmStorage;
+    private FilmDbStorage filmDbStorage;
+    private JdbcTemplate jdbcTemplate;
+    private FilmController filmController;
+    private FilmService filmService;
+    private Film film;
+    private User user;
 
     @BeforeEach
     public void launchBefore() {
