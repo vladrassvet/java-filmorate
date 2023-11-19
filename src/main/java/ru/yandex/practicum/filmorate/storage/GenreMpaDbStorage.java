@@ -57,19 +57,17 @@ public class GenreMpaDbStorage implements GenreMpaStorage {
         } else {
             log.warn("Жанр с рейтингом {} не найден.", id);
             throw new NotFoundException("Такого рейтинга не существует");
-
         }
     }
 
-    public Genre rowGenre(ResultSet rs, int i) throws SQLException {
+    private Genre rowGenre(ResultSet rs, int i) throws SQLException {
         return Genre.builder()
                 .id(rs.getInt("genre_id"))
                 .name(rs.getString("name"))
                 .build();
-
     }
 
-    public MPA rowMpa(ResultSet rs, int i) throws SQLException {
+    private MPA rowMpa(ResultSet rs, int i) throws SQLException {
         return MPA.builder()
                 .id(rs.getInt("MPA_id"))
                 .name(rs.getString("MPA_name"))

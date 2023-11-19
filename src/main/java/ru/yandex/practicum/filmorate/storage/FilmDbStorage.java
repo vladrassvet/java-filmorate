@@ -89,7 +89,6 @@ public class FilmDbStorage implements FilmStorage {
         } else {
             log.warn("Фильм с идентификатором {} не найден.", id);
             throw new NotFoundException("Такого фильма не существует");
-
         }
     }
 

@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.services;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.models.Genre;
 import ru.yandex.practicum.filmorate.models.MPA;
@@ -9,7 +8,6 @@ import ru.yandex.practicum.filmorate.storage.interfaces.GenreMpaStorage;
 
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GenreMpaService {
