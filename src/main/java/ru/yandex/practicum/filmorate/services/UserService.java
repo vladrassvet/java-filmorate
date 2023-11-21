@@ -15,7 +15,6 @@ import java.util.List;
 public class UserService {
 
     private final UserStorage userStorage;
-    private final UserDbStorage userDbStorage;
 
     public List<User> getUserMap() {
         return userStorage.getUserMap();
@@ -34,18 +33,18 @@ public class UserService {
     }
 
     public void addFriends(int id, int friendId) {
-        userDbStorage.addFriend(id, friendId);
+        userStorage.addFriend(id, friendId);
     }
 
     public void deleteFriends(int id, int friendId) {
-        userDbStorage.deleteFriend(id, friendId);
+        userStorage.deleteFriend(id, friendId);
     }
 
     public List<User> getFriends(int id) {
-        return userDbStorage.printFriend(id);
+        return userStorage.printFriend(id);
     }
 
     public List<User> getFriendOfFriends(int id, int otherId) {
-        return userDbStorage.getFriendOfFriends(id, otherId);
+        return userStorage.getFriendOfFriends(id, otherId);
     }
 }
