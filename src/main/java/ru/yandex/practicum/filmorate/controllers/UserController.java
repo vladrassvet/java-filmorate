@@ -1,19 +1,21 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.services.UserService;
 import ru.yandex.practicum.filmorate.models.User;
+import ru.yandex.practicum.filmorate.services.UserService;
 import ru.yandex.practicum.filmorate.validation.UserValidator;
+import ru.yandex.practicum.filmorate.validationException.NotFoundException;
 
-import java.util.*;
+import javax.validation.Valid;
+import java.util.Collection;
 
 @RestController
 @Slf4j
 public class UserController {
-
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public UserController(UserService userService) {
@@ -21,32 +23,43 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public List<User> getAll() {
-        return userService.getUsers();
+    public Collection<User> getUser() {
+        return userService.getUserMap();
     }
 
     @PostMapping("/users")
-    public User addUser(@RequestBody User user) {
-        UserValidator.validateBirthday(user);
-        UserValidator.validateEmail(user);
-        UserValidator.validateLogin(user);
-        UserValidator.validateName(user);
-
-        return userService.createUser(user);
+    public User addUser(@RequestBody @Valid User user) {
+        validate(user);
+        user = checkName(user);
+        userService.createUser(user);
+        log.info("Добавление пользователя");
+        return user;
     }
 
     @PutMapping("/users")
-    public User updateUser(@RequestBody User user) {
-        return userService.updateUsers(user);
+    public User updateUser(@RequestBody @Valid User user) {
+        validate(user);
+        user = checkName(user);
+        userService.updateUsers(user);
+        log.info("Изменение пользователя");
+        return user;
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
     public void addFriend(@PathVariable int id, @PathVariable int friendId) {
+        if (id <= 0 || friendId <= 0) {
+            throw new NotFoundException("передан некорректный id; "
+                    + id + "пользователя или добавляемого друга friendId; " + friendId);
+        }
         userService.addFriends(id, friendId);
     }
 
     @DeleteMapping("/users/{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable int id, @PathVariable int friendId) {
+        if (id <= 0 || friendId <= 0) {
+            throw new NotFoundException("передан некорректный id; "
+                    + id + "пользователя или добавляемого друга friendId; " + friendId);
+        }
         userService.deleteFriends(id, friendId);
     }
 
@@ -63,5 +76,19 @@ public class UserController {
     @GetMapping("/users/{id}")
     public User getUserById(@PathVariable int id) {
         return userService.getUserById(id);
+    }
+
+    private void validate(User user) {
+        UserValidator.validateBirthday(user);
+        UserValidator.validateEmail(user);
+        UserValidator.validateLogin(user);
+        UserValidator.validateName(user);
+    }
+
+    private User checkName(User user) {
+        if (user.getName() == null || StringUtils.isBlank(user.getName())) {
+            user = new User(user.getEmail(), user.getLogin(), user.getLogin(), user.getBirthday());
+        }
+        return user;
     }
 }

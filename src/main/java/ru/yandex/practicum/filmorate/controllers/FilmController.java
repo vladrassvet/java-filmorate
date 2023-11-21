@@ -23,7 +23,7 @@ public class FilmController {
 
     @GetMapping("/films")
     public List<Film> getAll() {
-        return filmService.getFilms();
+        return filmService.getFilmMap();
     }
 
     @PostMapping("/films")
@@ -48,7 +48,7 @@ public class FilmController {
 
     @DeleteMapping("/films/{id}/like/{userId}")
     public void deleteLike(@PathVariable int id, @PathVariable int userId) {
-       if (userId <= 0 || id <= 0) {
+        if (userId <= 0 || id <= 0) {
             throw new NotFoundException("передан некорректный id; " + id +
                     " фильма, или пользователя userId; " + userId);
         }
