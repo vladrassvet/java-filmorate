@@ -73,6 +73,7 @@ public class UserDbStorage implements UserStorage {
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser);
     }
 
+    @Override
     public void addFriend(int id, int friendId) {
         if (getUserById(id) != null && getUserById(friendId) != null) {
             String sqlQuery = "select user_id from friends where friend_id = ? AND status = ?";
@@ -92,6 +93,7 @@ public class UserDbStorage implements UserStorage {
         }
     }
 
+    @Override
     public void deleteFriend(int id, int friendId) {
         String sqlQuery = "delete from friends where user_id = ? AND friend_id = ?";
         jdbcTemplate.update(sqlQuery, id, friendId);
