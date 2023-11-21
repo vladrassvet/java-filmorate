@@ -32,7 +32,7 @@ class UserServiceTest {
         userStorage = new InMemoryUserStorage();
         jdbcTemplate = new JdbcTemplate();
         userDbStorage = new UserDbStorage(jdbcTemplate);
-        userService = new UserService(userStorage, userDbStorage);
+        userService = new UserService(userStorage);
         userController = new UserController(userService);
     }
 
